@@ -76,6 +76,18 @@ metadata:
   name: istiocontrolplane
 spec:
   profile: default
+  values:
+    global:
+      proxy:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 128Mi
+            ephemeral-storage: "1Gi"
+          limits:
+            cpu: 2000m
+            memory: 1024Mi
+            ephemeral-storage: "1Gi"
   meshConfig:
     enableTracing: true
     defaultConfig: 
@@ -100,15 +112,17 @@ spec:
             requests:
               cpu: 100m
               memory: 128Mi
+              ephemeral-storage: "1Gi"
             limits:
               cpu: 2000m
               memory: 1024Mi
+              ephemeral-storage: "2Gi"
           hpaSpec:
             minReplicas: 2
             maxReplicas: 4
           serviceAnnotations:  # Health check 관련 정보
             alb.ingress.kubernetes.io/healthcheck-path: /healthz/ready
-            alb.ingress.kubernetes.io/healthcheck-port: "32172" # Status Port에서 지정한 nodePort 지정
+            alb.ingress.kubernetes.io/healthcheck-port: "30782" # Status Port에서 지정한 nodePort 지정
           service:
             type: NodePort # ingress gateway 의 NodePort 사용
             ports:
@@ -116,7 +130,7 @@ spec:
                 protocol: TCP
                 port: 15021
                 targetPort: 15021
-                nodePort: 32172 # 요기!
+                nodePort: 30782 # 요기!
               - name: http2
                 protocol: TCP
                 port: 80
